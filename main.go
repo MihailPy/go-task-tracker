@@ -15,32 +15,50 @@ type Task struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
-func main() {
-	fileName := "tasks.json"
-
-	// Открываем файл:
-	// os.O_RDWR — чтение/запись
-	// os.O_CREATE — создать, если нет
-	// os.O_APPEND — (опционально) дописывать в конец
-	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0644)
+func SaveTasks(fileName string, tasks []Task) error {
+	file, err := os.Create(fileName)
 	if err != nil {
-		fmt.Println("Ошибка при открытии файла:", err)
-		return
+		return err
 	}
 	defer file.Close()
 
-	now := time.Now()
-	// Данные для записи
-	data := Task{Id: 1, Description: "My first task", Status: "todo", CreatedAt: now, UpdatedAt: now}
-
-	// Запись в формате JSON
 	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ") // для красивого форматирования
-	if err := encoder.Encode(data); err != nil {
-		fmt.Println("Ошибка при записи JSON:", err)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(tasks)
+}
+func LoadTasks(fileName string) ([]Task, error) {
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		return []Task{}, nil
+	}
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	var tasks []Task
+	if err := json.NewDecoder(file).Decode(&tasks); err != nil {
+		return nil, err
+	}
+	return tasks, nil
+}
+func main() {
+	fileName := "tasks.json"
+	now := time.Now()
+
+	tasks, err := LoadTasks(fileName)
+	if err != nil {
+		fmt.Println("Ошибка загрузки:", err)
 		return
 	}
 
-	fmt.Println("Файл успешно открыт/создан и обновлен.")
-	fmt.Println("Трекер задач запущен!")
+	// Данные для записи
+	newTask := Task{Id: len(tasks) + 1, Description: "My first task", Status: "todo", CreatedAt: now, UpdatedAt: now}
+
+	tasks = append(tasks, newTask)
+
+	if err := SaveTasks(fileName, tasks); err != nil {
+		fmt.Println("Ошибка сохранения:", err)
+		return
+	}
+	fmt.Printf("Успешно открыт/создан файл.\nУспешно создана задача: %d\nУспешно сохранена задача в файле.\n", len(tasks))
 }
