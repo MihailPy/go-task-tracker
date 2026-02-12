@@ -24,6 +24,11 @@ type Task struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
+func ListTasks(tasks []Task) {
+	for _, t := range tasks {
+		fmt.Printf("№ %d | Задача: %s | Статус: %s | Время создания: %v | Последние время редоктирования: %v\n", t.Id, t.Description, t.Status, t.CreatedAt, t.UpdatedAt)
+	}
+}
 func AddTask(description string, tasks []Task) ([]Task, error) {
 	if strings.TrimSpace(description) == "" {
 		return tasks, fmt.Errorf("description cannot be empty")
@@ -75,6 +80,8 @@ func main() {
 
 	description := "My description task"
 	tasks, err = AddTask(description, tasks)
+
+	ListTasks(tasks)
 
 	if err := SaveTasks(fileName, tasks); err != nil {
 		fmt.Println("Ошибка сохранения:", err)
