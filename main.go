@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -23,6 +24,20 @@ type Task struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
+func AddTask(description string, tasks []Task) ([]Task, error) {
+	if strings.TrimSpace(description) == "" {
+		return tasks, fmt.Errorf("description cannot be empty")
+	}
+	maxId := 0
+	for _, t := range tasks {
+		if t.Id > maxId {
+			maxId = t.Id
+		}
+	}
+	now := time.Now()
+	newTask := Task{Id: maxId + 1, Description: description, Status: StatusTodo, CreatedAt: now, UpdatedAt: now}
+	return append(tasks, newTask), nil
+}
 func SaveTasks(fileName string, tasks []Task) error {
 	file, err := os.Create(fileName)
 	if err != nil {
@@ -51,7 +66,6 @@ func LoadTasks(fileName string) ([]Task, error) {
 }
 func main() {
 	fileName := "tasks.json"
-	now := time.Now()
 
 	tasks, err := LoadTasks(fileName)
 	if err != nil {
@@ -59,10 +73,8 @@ func main() {
 		return
 	}
 
-	// Данные для записи
-	newTask := Task{Id: len(tasks) + 1, Description: "My first task", Status: "todo", CreatedAt: now, UpdatedAt: now}
-
-	tasks = append(tasks, newTask)
+	description := "My description task"
+	tasks, err = AddTask(description, tasks)
 
 	if err := SaveTasks(fileName, tasks); err != nil {
 		fmt.Println("Ошибка сохранения:", err)
