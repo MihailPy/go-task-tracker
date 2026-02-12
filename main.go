@@ -24,6 +24,14 @@ type Task struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
+func FindTaskById(tasks []Task, idTask int) int {
+	for i := range tasks {
+		if tasks[i].Id == idTask {
+			return i
+		}
+	}
+	return -1
+}
 func ListTasks(tasks []Task) {
 	for _, t := range tasks {
 		fmt.Printf("№ %d | Задача: %s | Статус: %s | Время создания: %v | Последние время редоктирования: %v\n", t.Id, t.Description, t.Status, t.CreatedAt, t.UpdatedAt)
