@@ -24,6 +24,20 @@ type Task struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
+func UpdTask(tasks []Task, idTask int, description string) ([]Task, error) {
+	if len(tasks) == 0 {
+		return nil, fmt.Errorf("list index out of range")
+	}
+	idx := FindTaskById(tasks, idTask)
+	if idx != -1 {
+		tasks[idx].Description = description
+		return tasks, nil
+	} else {
+		return nil, fmt.Errorf("Element with ID '%d' not found in the list.", idTask)
+	}
+
+}
+
 func DelTask(tasks []Task, idTask int) ([]Task, error) {
 	if len(tasks) == 0 {
 		return nil, fmt.Errorf("list index out of range")
@@ -103,13 +117,19 @@ func main() {
 	} else {
 		tasks = result
 	}
-	result, err = DelTask(tasks, 1)
+	// result, err = DelTask(tasks, 1)
+	// if err != nil {
+	// 	fmt.Println("Ошибка удаления задачи: ", err)
+	// } else {
+	// 	tasks = result
+	// }
+	ListTasks(tasks)
+	result, err = UpdTask(tasks, 8, "New description task")
 	if err != nil {
-		fmt.Println("Ошибка удаления задачи: ", err)
+		fmt.Println("Ошибка удаления: ", err)
 	} else {
 		tasks = result
 	}
-
 	ListTasks(tasks)
 	if err := SaveTasks(fileName, tasks); err != nil {
 		fmt.Println("Ошибка сохранения:", err)
