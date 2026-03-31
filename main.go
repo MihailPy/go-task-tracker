@@ -24,7 +24,7 @@ type Task struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
-func UpdTask(tasks []Task, idTask int, description string) ([]Task, error) {
+func UpdateTask(tasks []Task, idTask int, description string) ([]Task, error) {
 	if len(tasks) == 0 {
 		return nil, fmt.Errorf("list index out of range")
 	}
@@ -37,8 +37,7 @@ func UpdTask(tasks []Task, idTask int, description string) ([]Task, error) {
 	}
 
 }
-
-func DelTask(tasks []Task, idTask int) ([]Task, error) {
+func DeleteTask(tasks []Task, idTask int) ([]Task, error) {
 	if len(tasks) == 0 {
 		return nil, fmt.Errorf("list index out of range")
 	}
@@ -124,7 +123,7 @@ func main() {
 	// 	tasks = result
 	// }
 	ListTasks(tasks)
-	result, err = UpdTask(tasks, 8, "New description task")
+	result, err = UpdateTask(tasks, 8, "New description task")
 	if err != nil {
 		fmt.Println("Ошибка удаления: ", err)
 	} else {
