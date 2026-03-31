@@ -24,6 +24,19 @@ type Task struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
+func UpdateTaskStatus(t []Task, id int, s TaskStatus) ([]Task, error) {
+	if len(t) == 0 {
+		return nil, fmt.Errorf("list index out of range")
+	}
+	idx := FindTaskById(t, id)
+	if idx != -1 {
+		t[idx].Status = s
+		t[idx].UpdatedAt = time.Now()
+		return t, nil
+	} else {
+		return nil, fmt.Errorf("Element with ID '%d' not found in the list.", id)
+	}
+}
 func UpdateTask(tasks []Task, idTask int, description string) ([]Task, error) {
 	if len(tasks) == 0 {
 		return nil, fmt.Errorf("list index out of range")
@@ -31,6 +44,7 @@ func UpdateTask(tasks []Task, idTask int, description string) ([]Task, error) {
 	idx := FindTaskById(tasks, idTask)
 	if idx != -1 {
 		tasks[idx].Description = description
+		// TODO: Добавить обнавление время последнего обновления
 		return tasks, nil
 	} else {
 		return nil, fmt.Errorf("Element with ID '%d' not found in the list.", idTask)
@@ -122,14 +136,22 @@ func main() {
 	// } else {
 	// 	tasks = result
 	// }
+	// result, err = UpdateTask(tasks, 8, "New description task")
+	// if err != nil {
+	// 	fmt.Println("Ошибка удаления: ", err)
+	// } else {
+	// 	tasks = result
+	// }
+
 	ListTasks(tasks)
-	result, err = UpdateTask(tasks, 8, "New description task")
+	result, err = UpdateTaskStatus(tasks, 8, StatusInProgress)
 	if err != nil {
-		fmt.Println("Ошибка удаления: ", err)
+		fmt.Println("Ошибка изменения статуса задачи: ", err)
 	} else {
 		tasks = result
 	}
 	ListTasks(tasks)
+
 	if err := SaveTasks(fileName, tasks); err != nil {
 		fmt.Println("Ошибка сохранения:", err)
 		return
