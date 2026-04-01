@@ -24,6 +24,14 @@ type Task struct {
 	UpdatedAt   time.Time  `json:"updatedAt"`
 }
 
+func FilterTasksByStatus(tasks []Task, s TaskStatus) {
+	for i := range tasks {
+		t := tasks[i]
+		if t.Status == s {
+			fmt.Printf("№ %d | Задача: %s | Статус: %s | Время создания: %v | Последние время редоктирования: %v\n", t.Id, t.Description, t.Status, t.CreatedAt, t.UpdatedAt)
+		}
+	}
+}
 func UpdateTaskStatus(t []Task, id int, s TaskStatus) ([]Task, error) {
 	if len(t) == 0 {
 		return nil, fmt.Errorf("list index out of range")
@@ -44,7 +52,7 @@ func UpdateTask(tasks []Task, idTask int, description string) ([]Task, error) {
 	idx := FindTaskById(tasks, idTask)
 	if idx != -1 {
 		tasks[idx].Description = description
-		// TODO: Добавить обнавление время последнего обновления
+		tasks[idx].UpdatedAt = time.Now()
 		return tasks, nil
 	} else {
 		return nil, fmt.Errorf("Element with ID '%d' not found in the list.", idTask)
@@ -143,7 +151,10 @@ func main() {
 	// 	tasks = result
 	// }
 
-	ListTasks(tasks)
+	// ListTasks(tasks)
+
+	FilterTasksByStatus(tasks, StatusTodo)
+
 	result, err = UpdateTaskStatus(tasks, 8, StatusInProgress)
 	if err != nil {
 		fmt.Println("Ошибка изменения статуса задачи: ", err)
