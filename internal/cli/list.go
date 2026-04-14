@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func (a *App) newListCmd() *cobra.Command {
+func (a *App) TaskListCmd() *cobra.Command {
 	var status string
 	cmd := &cobra.Command{
 		Use:   "list",

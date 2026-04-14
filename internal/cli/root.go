@@ -20,7 +20,7 @@ func (a *App) Execute() error {
 		Use:   "task-tracker",
 		Short: "Task-tracker - это менеджер задач",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(`
+			fmt.Printf(`
 ████████  █████  ███████ ██   ██       ████████ ██████   █████   ██████ ██   ██ ███████ ██████  
    ██    ██   ██ ██      ██  ██           ██    ██   ██ ██   ██ ██      ██  ██  ██      ██   ██ 
    ██    ███████ ███████ █████   █████    ██    ██████  ███████ ██      █████   █████   ██████  
@@ -28,10 +28,11 @@ func (a *App) Execute() error {
    ██    ██   ██ ███████ ██   ██          ██    ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██ 
                                                                                                 
 			`)
-			fmt.Println("Enert help for help about command.")
+			fmt.Printf("Enert help for help about command.")
 
 		},
 	}
-	rootCmd.AddCommand(a.newListCmd())
+	rootCmd.AddCommand(a.TaskListCmd())
+	rootCmd.AddCommand(a.TaskAddCmd())
 	return rootCmd.Execute()
 }
