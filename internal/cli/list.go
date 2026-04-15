@@ -8,43 +8,62 @@ import (
 )
 
 func (a *App) TaskListCmd() *cobra.Command {
-	var status string
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Возможен фильтр по статусу (todo, in-progress, done)",
 		Run: func(cmd *cobra.Command, args []string) {
-			if status != "" {
-				switch status {
-				case "todo":
-					tasks, _ := a.taskService.ListTasksByStatus(domain.StatusTodo)
-					fmt.Println("\n📋 Задачи в статусе 'todo':")
-					for _, t := range tasks {
-						fmt.Printf("  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
-					}
-				case "in-progress":
-					tasks, _ := a.taskService.ListTasksByStatus(domain.StatusInProgress)
-					fmt.Println("\n📋 Задачи в статусе 'in-progress':")
-					for _, t := range tasks {
-						fmt.Printf("  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
-					}
-				case "done":
-					tasks, _ := a.taskService.ListTasksByStatus(domain.StatusDone)
-					fmt.Println("\n📋 Задачи в статусе 'done':")
-					for _, t := range tasks {
-						fmt.Printf("  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
-					}
-				}
-
-			} else {
-				tasks, _ := a.taskService.ListAllTasks()
-				fmt.Println("\n📋 Все задачи:")
-				for _, t := range tasks {
-					fmt.Printf("  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
-				}
+			tasks, _ := a.taskService.ListAllTasks()
+			fmt.Println("\n📋 Все задачи:")
+			for _, t := range tasks {
+				fmt.Printf("  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
 			}
 		},
 	}
+	cmd.AddCommand(a.TaskListDoneCmd())
+	cmd.AddCommand(a.TaskListTodoCmd())
+	cmd.AddCommand(a.TaskListInProgressCmd())
+	return cmd
+}
 
-	cmd.Flags().StringVarP(&status, "status", "s", "", "Фильтр по статусу (todo, in-progress, done)")
+func (a *App) TaskListTodoCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "todo",
+		Short: "Показать только не начатые задачи",
+		Run: func(cmd *cobra.Command, args []string) {
+			tasks, _ := a.taskService.ListTasksByStatus(domain.StatusTodo)
+			fmt.Println("\n📋 Задачи в статусе 'todo':")
+			for _, t := range tasks {
+				fmt.Printf("  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
+			}
+		},
+	}
+	return cmd
+}
+func (a *App) TaskListInProgressCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "in-progres",
+		Short: "Показать только выполняемые задачи",
+		Run: func(cmd *cobra.Command, args []string) {
+			tasks, _ := a.taskService.ListTasksByStatus(domain.StatusInProgress)
+			fmt.Println("\n📋 Задачи в статусе 'in-progress':")
+			for _, t := range tasks {
+				fmt.Printf("  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
+			}
+		},
+	}
+	return cmd
+}
+func (a *App) TaskListDoneCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "done",
+		Short: "Показать только выполненные задачи",
+		Run: func(cmd *cobra.Command, args []string) {
+			tasks, _ := a.taskService.ListTasksByStatus(domain.StatusDone)
+			fmt.Println("\n📋 Задачи в статусе 'done':")
+			for _, t := range tasks {
+				fmt.Printf("  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
+			}
+		},
+	}
 	return cmd
 }
