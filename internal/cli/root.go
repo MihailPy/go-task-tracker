@@ -34,5 +34,6 @@ func (a *App) Execute() error {
 	}
 	rootCmd.AddCommand(a.TaskListCmd())
 	rootCmd.AddCommand(a.TaskAddCmd())
+	rootCmd.AddCommand(a.TaskUpdateCmd())
 	return rootCmd.Execute()
 }
