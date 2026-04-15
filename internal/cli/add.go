@@ -6,9 +6,11 @@ import "github.com/spf13/cobra"
 func (a *App) TaskAddCmd() *cobra.Command {
 	var desc string
 	cmd := &cobra.Command{
-		Use:   "add",
+		Use:   "add [task description]",
 		Short: "Добавление задачи. Описание задачи (обязательно)",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			desc = args[0]
 			task, err := a.taskService.AddTask(desc)
 			if err != nil {
 				return fmt.Errorf("Не удалось добавить задачу: %w", err)
@@ -18,7 +20,5 @@ func (a *App) TaskAddCmd() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVarP(&desc, "description", "d", "", "Описание задачи (обязательно)")
-	cmd.MarkFlagRequired("description")
 	return cmd
 }
