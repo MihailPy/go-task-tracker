@@ -41,7 +41,7 @@ func (a *App) TaskListTodoCmd() *cobra.Command {
 }
 func (a *App) TaskListInProgressCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "in-progres",
+		Use:   "in-progress",
 		Short: "Показать только выполняемые задачи",
 		Run: func(cmd *cobra.Command, args []string) {
 			tasks, _ := a.taskService.ListTasksByStatus(domain.StatusInProgress)
