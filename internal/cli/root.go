@@ -37,5 +37,6 @@ func (a *App) Execute() error {
 	rootCmd.AddCommand(a.TaskUpdateCmd())
 	rootCmd.AddCommand(a.TaskMarkInProgressCmd())
 	rootCmd.AddCommand(a.TaskMarkDoneCmd())
+	rootCmd.AddCommand(a.TaskDeleteCmd())
 	return rootCmd.Execute()
 }

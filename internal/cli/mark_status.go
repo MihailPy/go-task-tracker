@@ -11,7 +11,7 @@ import (
 func (a *App) TaskMarkInProgressCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "mark-in-progress [id]",
-		Short: "Отметить задачу in-progress (в прогрессе).",
+		Short: "Отметить задачу in-progress (в прогрессе)",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.Atoi(args[0])
@@ -31,7 +31,7 @@ func (a *App) TaskMarkInProgressCmd() *cobra.Command {
 func (a *App) TaskMarkDoneCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "mark-done [id]",
-		Short: "Отметить задачу done (выполнено).",
+		Short: "Отметить задачу done (выполнено)",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.Atoi(args[0])

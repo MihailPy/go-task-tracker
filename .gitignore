@@ -16,3 +16,5 @@ vendor/          # если не используете режим vendor
 .vscode/         # если работаете в VS Code
 
 tasks.json
+
+task-cli
