@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sync"
 	"task-tracker/internal/domain"
 )
@@ -103,6 +104,7 @@ func (r *JSONTaskRepository) FindByStatus(status domain.TaskStatus) ([]*domain.T
 }
 
 func (r *JSONTaskRepository) load() ([]*domain.Task, error) {
+
 	file, err := os.Open(r.filePath)
 	if os.IsNotExist(err) {
 		return []*domain.Task{}, nil
@@ -120,13 +122,29 @@ func (r *JSONTaskRepository) load() ([]*domain.Task, error) {
 }
 
 func (r *JSONTaskRepository) save(tasks []*domain.Task) error {
-	file, err := os.Create(r.filePath)
+	dir := filepath.Dir(r.filePath)
+	tempFile, err := os.CreateTemp(dir, "tmp-*.json.tmp")
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	tempPath := tempFile.Name()
 
-	encoder := json.NewEncoder(file)
+	defer os.Remove(tempPath)
+
+	defer tempFile.Close()
+
+	encoder := json.NewEncoder(tempFile)
 	encoder.SetIndent("", "  ")
-	return encoder.Encode(tasks)
+	if err := encoder.Encode(tasks); err != nil {
+		return err
+	}
+
+	if err := tempFile.Sync(); err != nil {
+		return err
+	}
+
+	if err := tempFile.Close(); err != nil {
+		return err
+	}
+	return os.Rename(tempPath, r.filePath)
 }
