@@ -3,6 +3,7 @@ package repository
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sync"
@@ -115,7 +116,11 @@ func (r *JSONTaskRepository) load() ([]*domain.Task, error) {
 	defer file.Close()
 
 	var tasks []*domain.Task
-	if err := json.NewDecoder(file).Decode(&tasks); err != nil {
+	err = json.NewDecoder(file).Decode(&tasks)
+	if err == io.EOF {
+		return []*domain.Task{}, nil
+	}
+	if err != nil {
 		return nil, err
 	}
 	return tasks, nil
