@@ -2,17 +2,25 @@ package cli
 
 import (
 	"fmt"
-	"task-tracker/internal/service"
+	"task-tracker/internal/domain"
 
 	"github.com/spf13/cobra"
 )
 
+type TaskUseCase interface {
+	AddTask(description string) (*domain.Task, error)
+	UpdateTaskStatus(id int, status domain.TaskStatus) error
+	UpdateTaskDescription(id int, desc string) error
+	DeleteTask(id int) error
+	ListAllTasks() ([]*domain.Task, error)
+	ListTasksByStatus(status domain.TaskStatus) ([]*domain.Task, error)
+}
 type App struct {
-	taskService service.TaskService
+	taskService TaskUseCase
 }
 
-func NewApp(service service.TaskService) *App {
-	return &App{taskService: service}
+func NewApp(svc TaskUseCase) *App {
+	return &App{taskService: svc}
 }
 
 func (a *App) Execute() error {
