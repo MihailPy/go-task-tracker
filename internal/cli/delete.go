@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
+	"task-tracker/internal/domain"
 
 	"github.com/spf13/cobra"
 )
@@ -18,7 +20,10 @@ func (a *App) TaskDeleteCmd() *cobra.Command {
 			}
 			err = a.taskService.DeleteTask(id)
 			if err != nil {
-				return fmt.Errorf("Не удалось удалить задачу #%d : %w", id, err)
+				if errors.Is(err, domain.ErrTaskNotFound) {
+					return fmt.Errorf("задача с ID %d не найдена - нечего удалять", id)
+				}
+				return fmt.Errorf("не удалось выполнить операцию: %w", err)
 			}
 			fmt.Printf("\n🔄 Задача #%d удалена \n", id)
 			return nil

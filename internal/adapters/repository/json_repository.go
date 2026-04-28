@@ -25,7 +25,7 @@ func (r *JSONTaskRepository) Save(task *domain.Task) error {
 
 	tasks, err := r.load()
 	if err != nil {
-		return err
+		return fmt.Errorf("repository cannot load tasks for saving: %w", err)
 	}
 
 	found := false
@@ -40,7 +40,12 @@ func (r *JSONTaskRepository) Save(task *domain.Task) error {
 		tasks = append(tasks, task)
 	}
 
-	return r.save(tasks)
+	err = r.save(tasks)
+	if err != nil {
+		return fmt.Errorf("failed to write data to file: %w", err)
+	}
+
+	return nil
 }
 
 func (r *JSONTaskRepository) FindByID(id int) (*domain.Task, error) {
@@ -49,7 +54,7 @@ func (r *JSONTaskRepository) FindByID(id int) (*domain.Task, error) {
 
 	tasks, err := r.load()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load tasks: %w", err)
 	}
 
 	for _, t := range tasks {
@@ -57,7 +62,7 @@ func (r *JSONTaskRepository) FindByID(id int) (*domain.Task, error) {
 			return t, nil
 		}
 	}
-	return nil, nil
+	return nil, fmt.Errorf("task %d: %w", id, domain.ErrTaskNotFound)
 }
 
 func (r *JSONTaskRepository) Delete(id int) error {
@@ -66,17 +71,23 @@ func (r *JSONTaskRepository) Delete(id int) error {
 
 	tasks, err := r.load()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to load tasks: %w", err)
 	}
 
 	for i, t := range tasks {
 		if t.ID == id {
 			tasks = append(tasks[:i], tasks[i+1:]...)
-			return r.save(tasks)
+
+			err := r.save(tasks)
+			if err != nil {
+				return fmt.Errorf("failed to save tasks after deletion: %w", err)
+			}
+
+			return nil
 		}
 	}
 
-	return fmt.Errorf("task with ID %d not found", id)
+	return fmt.Errorf("task %d: %w", id, domain.ErrTaskNotFound)
 }
 
 func (r *JSONTaskRepository) FindAll() ([]*domain.Task, error) {
@@ -92,7 +103,7 @@ func (r *JSONTaskRepository) FindByStatus(status domain.TaskStatus) ([]*domain.T
 
 	tasks, err := r.load()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load tasks: %w", err)
 	}
 
 	var result []*domain.Task
@@ -111,7 +122,7 @@ func (r *JSONTaskRepository) load() ([]*domain.Task, error) {
 		return []*domain.Task{}, nil
 	}
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open storage file: %w", err)
 	}
 	defer file.Close()
 
@@ -121,7 +132,7 @@ func (r *JSONTaskRepository) load() ([]*domain.Task, error) {
 		return []*domain.Task{}, nil
 	}
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decode tasks json: %w", err)
 	}
 	return tasks, nil
 }
@@ -130,7 +141,7 @@ func (r *JSONTaskRepository) save(tasks []*domain.Task) error {
 	dir := filepath.Dir(r.filePath)
 	tempFile, err := os.CreateTemp(dir, "tmp-*.json.tmp")
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create temp file in %s: %w", dir, err)
 	}
 	tempPath := tempFile.Name()
 
@@ -141,15 +152,19 @@ func (r *JSONTaskRepository) save(tasks []*domain.Task) error {
 	encoder := json.NewEncoder(tempFile)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(tasks); err != nil {
-		return err
+		return fmt.Errorf("failed to encode tasks to json: %w", err)
 	}
 
 	if err := tempFile.Sync(); err != nil {
-		return err
+		return fmt.Errorf("failed to sync temp file: %w", err)
 	}
 
 	if err := tempFile.Close(); err != nil {
-		return err
+		return fmt.Errorf("failed to close temp file: %w", err)
 	}
-	return os.Rename(tempPath, r.filePath)
+
+	if err := os.Rename(tempPath, r.filePath); err != nil {
+		return fmt.Errorf("failed to rename temp file to %s: %w", r.filePath, err)
+	}
+	return nil
 }

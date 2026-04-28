@@ -42,10 +42,7 @@ func (s *TaskService) AddTask(description string) (*domain.Task, error) {
 func (s *TaskService) UpdateTaskStatus(id int, newStatus domain.TaskStatus) error {
 	task, err := s.repo.FindByID(id)
 	if err != nil {
-		return fmt.Errorf("failed to find task: %w", err)
-	}
-	if task == nil {
-		return fmt.Errorf("task with ID %d not found", id)
+		return fmt.Errorf("action failed for task %d: %w", id, err)
 	}
 
 	if err := task.UpdateStatus(newStatus); err != nil {
@@ -58,10 +55,7 @@ func (s *TaskService) UpdateTaskStatus(id int, newStatus domain.TaskStatus) erro
 func (s *TaskService) UpdateTaskDescription(id int, newDescription string) error {
 	task, err := s.repo.FindByID(id)
 	if err != nil {
-		return fmt.Errorf("failed to find task: %w", err)
-	}
-	if task == nil {
-		return fmt.Errorf("task with ID %d not found", id)
+		return fmt.Errorf("action failed for task %d: %w", id, err)
 	}
 
 	if err := task.UpdateDescription(newDescription); err != nil {
@@ -72,12 +66,9 @@ func (s *TaskService) UpdateTaskDescription(id int, newDescription string) error
 }
 
 func (s *TaskService) DeleteTask(id int) error {
-	task, err := s.repo.FindByID(id)
+	_, err := s.repo.FindByID(id)
 	if err != nil {
-		return fmt.Errorf("failed to find task: %w", err)
-	}
-	if task == nil {
-		return fmt.Errorf("task with ID %d not found", id)
+		return fmt.Errorf("action failed for task %d: %w", id, err)
 	}
 
 	return s.repo.Delete(id)

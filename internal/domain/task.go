@@ -19,7 +19,7 @@ func (s TaskStatus) Validate() error {
 	case StatusTodo, StatusInProgress, StatusDone:
 		return nil
 	default:
-		return fmt.Errorf("invalid status: %s", s)
+		return fmt.Errorf("%w: %s", ErrInvalidStatus, s)
 	}
 }
 
@@ -33,7 +33,7 @@ type Task struct {
 
 func NewTask(id int, description string) (*Task, error) {
 	if strings.TrimSpace(description) == "" {
-		return nil, fmt.Errorf("description cannot be empty")
+		return nil, ErrEmptyDescription
 	}
 	now := time.Now()
 	return &Task{
@@ -56,7 +56,7 @@ func (t *Task) UpdateStatus(newStatus TaskStatus) error {
 
 func (t *Task) UpdateDescription(newDesc string) error {
 	if strings.TrimSpace(newDesc) == "" {
-		return fmt.Errorf("description cannot be empty")
+		return ErrEmptyDescription
 	}
 	t.Description = newDesc
 	t.UpdatedAt = time.Now()

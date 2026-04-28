@@ -8,7 +8,7 @@ import (
 func parseTaskID(arg string) (int, error) {
 	id, err := strconv.Atoi(arg)
 	if err != nil {
-		return 0, fmt.Errorf("неверный формат ID: %s (должно быть число)", arg)
+		return 0, fmt.Errorf("неверный формат ID %s (ожидается число): %w", arg, err)
 	}
 	return id, nil
 }

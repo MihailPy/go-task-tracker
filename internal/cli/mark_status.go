@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"task-tracker/internal/domain"
 
@@ -19,7 +20,10 @@ func (a *App) TaskMarkInProgressCmd() *cobra.Command {
 			}
 			err = a.taskService.UpdateTaskStatus(id, domain.StatusInProgress)
 			if err != nil {
-				return fmt.Errorf("Не удалось отметить in-progress задачу #%d : %w", id, err)
+				if errors.Is(err, domain.ErrTaskNotFound) {
+					return fmt.Errorf("ошибка: задача #%d не существует", id)
+				}
+				return fmt.Errorf("не удалось обновить статус задачи #%d : %w", id, err)
 			}
 			fmt.Printf("\n🔄 Статус задачи #%d обновлён на %s\n", id, domain.StatusInProgress)
 			return nil
@@ -39,7 +43,10 @@ func (a *App) TaskMarkDoneCmd() *cobra.Command {
 			}
 			err = a.taskService.UpdateTaskStatus(id, domain.StatusDone)
 			if err != nil {
-				return fmt.Errorf("Не удалось отметить done задачу #%d : %w", id, err)
+				if errors.Is(err, domain.ErrTaskNotFound) {
+					return fmt.Errorf("ошибка: задача #%d не существует", id)
+				}
+				return fmt.Errorf("не удалось обновить статус задачи #%d : %w", id, err)
 			}
 			fmt.Printf("\n🔄 Статус задачи #%d обновлён на %s\n", id, domain.StatusDone)
 			return nil
