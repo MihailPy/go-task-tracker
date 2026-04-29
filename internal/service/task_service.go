@@ -15,19 +15,7 @@ func NewTaskService(repo ports.TaskRepository) *TaskService {
 }
 
 func (s *TaskService) AddTask(description string) (*domain.Task, error) {
-	allTasks, err := s.repo.FindAll()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get tasks: %w", err)
-	}
-
-	maxID := 0
-	for _, t := range allTasks {
-		if t.ID > maxID {
-			maxID = t.ID
-		}
-	}
-
-	task, err := domain.NewTask(maxID+1, description)
+	task, err := domain.NewTask(0, description)
 	if err != nil {
 		return nil, err
 	}
