@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"sync"
 	"task-tracker/internal/domain"
 )
@@ -107,7 +108,12 @@ func (r *JSONTaskRepository) FindAll() ([]*domain.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	return wrapper.Tasks, nil
+	tasks := wrapper.Tasks
+
+	sort.Slice(tasks, func(i, j int) bool {
+		return tasks[i].ID < tasks[j].ID
+	})
+	return tasks, nil
 }
 
 func (r *JSONTaskRepository) FindByStatus(status domain.TaskStatus) ([]*domain.Task, error) {
