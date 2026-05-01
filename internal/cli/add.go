@@ -24,7 +24,7 @@ func (a *App) TaskAddCmd() *cobra.Command {
 				return fmt.Errorf("критическая ошибка при добавлении: %w", err)
 			}
 
-			fmt.Printf("✅ Добавлена задача #%d: %s\n", task.ID, task.Description)
+			fmt.Printf("Задача #%d добавлена: %s\n", task.ID, task.Description)
 			return nil
 		},
 	}

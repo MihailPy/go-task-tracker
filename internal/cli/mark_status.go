@@ -11,7 +11,7 @@ import (
 func (a *App) TaskMarkInProgressCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "mark-in-progress [id]",
-		Short: "Отметить задачу in-progress (в прогрессе)",
+		Short: "Перевести задачу в статус \"in-progress\"",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := parseTaskID(args[0])
@@ -25,7 +25,7 @@ func (a *App) TaskMarkInProgressCmd() *cobra.Command {
 				}
 				return fmt.Errorf("не удалось обновить статус задачи #%d : %w", id, err)
 			}
-			fmt.Printf("\n🔄 Статус задачи #%d обновлён на %s\n", id, domain.StatusInProgress)
+			fmt.Printf("Статус задачи #%d изменён на %s\n", id, domain.StatusInProgress)
 			return nil
 		},
 	}
@@ -34,7 +34,7 @@ func (a *App) TaskMarkInProgressCmd() *cobra.Command {
 func (a *App) TaskMarkDoneCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "mark-done [id]",
-		Short: "Отметить задачу done (выполнено)",
+		Short: "Перевести задачу в статус \"done\"",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := parseTaskID(args[0])
@@ -48,7 +48,7 @@ func (a *App) TaskMarkDoneCmd() *cobra.Command {
 				}
 				return fmt.Errorf("не удалось обновить статус задачи #%d : %w", id, err)
 			}
-			fmt.Printf("\n🔄 Статус задачи #%d обновлён на %s\n", id, domain.StatusDone)
+			fmt.Printf("Статус задачи #%d изменён на %s\n", id, domain.StatusDone)
 			return nil
 		},
 	}

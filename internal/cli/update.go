@@ -11,7 +11,7 @@ import (
 func (a *App) TaskUpdateCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "update [id] [description]",
-		Short: "Обновление описания задачи. Id задачи и описание задачи (обязательно)",
+		Short: "Обновить описание задачи (ID и описание обязательны)",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := parseTaskID(args[0])
@@ -29,7 +29,7 @@ func (a *App) TaskUpdateCmd() *cobra.Command {
 				}
 				return fmt.Errorf("не удалось выполнить операцию: %w", err)
 			}
-			fmt.Printf("\n📝 Описание задачи #%d обновлено, на %s\n", id, desc)
+			fmt.Printf("Описание задачи #%d обновлено: %s\n", id, desc)
 			return nil
 		},
 	}

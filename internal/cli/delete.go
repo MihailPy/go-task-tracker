@@ -11,7 +11,7 @@ import (
 func (a *App) TaskDeleteCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "delete [id]",
-		Short: "Удалить задачу, по ID",
+		Short: "Удалить задачу по ID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := parseTaskID(args[0])
@@ -25,7 +25,7 @@ func (a *App) TaskDeleteCmd() *cobra.Command {
 				}
 				return fmt.Errorf("не удалось выполнить операцию: %w", err)
 			}
-			fmt.Printf("\n🔄 Задача #%d удалена \n", id)
+			fmt.Printf("Задача #%d удалена\n", id)
 			return nil
 		},
 	}

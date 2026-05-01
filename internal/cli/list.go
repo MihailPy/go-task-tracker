@@ -14,7 +14,7 @@ func printTasks(w io.Writer, header string, tasks []*domain.Task) {
 		fmt.Fprintln(w, "Список задач пуст")
 		return
 	}
-	fmt.Fprintf(w, "\n📋 %s:\n", header)
+	fmt.Fprintf(w, "\n%s:\n", header)
 	for _, t := range tasks {
 		fmt.Fprintf(w, "  #%d: %s [%s]\n", t.ID, t.Description, t.Status)
 	}
@@ -23,7 +23,7 @@ func printTasks(w io.Writer, header string, tasks []*domain.Task) {
 func (a *App) TaskListCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "Возможен фильтр по статусу (todo, in-progress, done)",
+		Short: "Показать задачи (фильтр по статусу: todo, in-progress, done)",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			tasks, err := a.taskService.ListAllTasks()
 			if err != nil {
@@ -48,7 +48,7 @@ func (a *App) TaskListTodoCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			printTasks(cmd.OutOrStdout(), "Задачи в статусе 'todo'", tasks)
+			printTasks(cmd.OutOrStdout(), "Задачи со статусом \"todo\"", tasks)
 			return nil
 		},
 	}
@@ -63,7 +63,7 @@ func (a *App) TaskListInProgressCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			printTasks(cmd.OutOrStdout(), "Задачи в статусе 'in-progress'", tasks)
+			printTasks(cmd.OutOrStdout(), "Задачи со статусом \"in-progress\"", tasks)
 			return nil
 		},
 	}
@@ -78,7 +78,7 @@ func (a *App) TaskListDoneCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			printTasks(cmd.OutOrStdout(), "Задачи в статусе 'done'", tasks)
+			printTasks(cmd.OutOrStdout(), "Задачи со статусом \"done\"", tasks)
 			return nil
 		},
 	}

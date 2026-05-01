@@ -26,7 +26,7 @@ func NewApp(svc TaskUseCase) *App {
 func (a *App) Execute() error {
 	rootCmd := &cobra.Command{
 		Use:   "task-tracker",
-		Short: "Task-tracker - это менеджер задач",
+		Short: "Task Tracker - менеджер задач",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Printf(`
 ████████  █████  ███████ ██   ██       ████████ ██████   █████   ██████ ██   ██ ███████ ██████  
@@ -36,7 +36,7 @@ func (a *App) Execute() error {
    ██    ██   ██ ███████ ██   ██          ██    ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██ 
                                                                                                 
 			`)
-			fmt.Printf("Enert help for help about command.")
+			fmt.Printf("Введите \"help\" для списка команд.\n")
 
 		},
 	}
