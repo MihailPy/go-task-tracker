@@ -1,7 +1,12 @@
 package cli
 
-import "fmt"
-import "github.com/spf13/cobra"
+import (
+	"errors"
+	"fmt"
+	"task-tracker/internal/domain"
+
+	"github.com/spf13/cobra"
+)
 
 func (a *App) TaskAddCmd() *cobra.Command {
 	var desc string
@@ -13,10 +18,13 @@ func (a *App) TaskAddCmd() *cobra.Command {
 			desc = args[0]
 			task, err := a.taskService.AddTask(desc)
 			if err != nil {
-				return fmt.Errorf("Не удалось добавить задачу: %w", err)
+				if errors.Is(err, domain.ErrEmptyDescription) {
+					return errors.New("ошибка: описание задачи не может быть пустым")
+				}
+				return fmt.Errorf("критическая ошибка при добавлении: %w", err)
 			}
 
-			fmt.Printf("✅ Добавлена задача #%d: %s\n", task.ID, task.Description)
+			fmt.Printf("Задача #%d добавлена: %s\n", task.ID, task.Description)
 			return nil
 		},
 	}

@@ -2,23 +2,31 @@ package cli
 
 import (
 	"fmt"
-	"task-tracker/internal/service"
+	"task-tracker/internal/domain"
 
 	"github.com/spf13/cobra"
 )
 
+type TaskUseCase interface {
+	AddTask(description string) (*domain.Task, error)
+	UpdateTaskStatus(id int, status domain.TaskStatus) error
+	UpdateTaskDescription(id int, desc string) error
+	DeleteTask(id int) error
+	ListAllTasks() ([]*domain.Task, error)
+	ListTasksByStatus(status domain.TaskStatus) ([]*domain.Task, error)
+}
 type App struct {
-	taskService service.TaskService
+	taskService TaskUseCase
 }
 
-func NewApp(service service.TaskService) *App {
-	return &App{taskService: service}
+func NewApp(svc TaskUseCase) *App {
+	return &App{taskService: svc}
 }
 
 func (a *App) Execute() error {
 	rootCmd := &cobra.Command{
 		Use:   "task-tracker",
-		Short: "Task-tracker - это менеджер задач",
+		Short: "Task Tracker - менеджер задач",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Printf(`
 ████████  █████  ███████ ██   ██       ████████ ██████   █████   ██████ ██   ██ ███████ ██████  
@@ -28,7 +36,7 @@ func (a *App) Execute() error {
    ██    ██   ██ ███████ ██   ██          ██    ██   ██ ██   ██  ██████ ██   ██ ███████ ██   ██ 
                                                                                                 
 			`)
-			fmt.Printf("Enert help for help about command.")
+			fmt.Printf("Введите \"help\" для списка команд.\n")
 
 		},
 	}

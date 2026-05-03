@@ -12,7 +12,7 @@ func main() {
 	repo := repository.NewJSONTaskRepository("tasks.json")
 	taskService := service.NewTaskService(repo)
 
-	app := cli.NewApp(*taskService)
+	app := cli.NewApp(taskService)
 
 	if err := app.Execute(); err != nil {
 		log.Fatal(err)
