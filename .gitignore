@@ -18,3 +18,5 @@ vendor/          # если не используете режим vendor
 tasks.json
 
 task-cli
+
+.DS_Store
