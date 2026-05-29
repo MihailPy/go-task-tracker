@@ -1,0 +1,20 @@
+{
+  "title": "Task Tracker CLI",
+  "status": "ready",
+  "category": "CLI tool",
+  "priority": 3,
+  "stack": [
+    "Go",
+    "Cobra",
+    "JSON storage",
+    "testing"
+  ],
+  "summary": "Небольшой CLI-трекер задач на Go с хранением данных в JSON-файле и слоистой архитектурой.",
+  "highlights": [
+    "CLI-команды для управления задачами",
+    "Статусы todo, in-progress и done",
+    "Слоистая архитектура",
+    "JSON-хранилище",
+    "Автоматические тесты"
+  ]
+}
